@@ -14,7 +14,7 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.android.synthetic.main.activity_maps.*
 
-class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMyLocationClickListener, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMapClickListener {
+class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMyLocationClickListener, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMapClickListener{
 
     private var mDestinationMarker: Marker? = null
     private lateinit var mMap: GoogleMap
@@ -41,6 +41,34 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMyLoca
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
+        mMap.setOnMarkerDragListener(object : GoogleMap.OnMarkerDragListener{
+            override fun onMarkerDragEnd(marker: Marker?) {
+                mDestinationMarker?.remove()
+                marker?.let {
+                    val pos = it.position
+                    val markerOptions  = MarkerOptions().position(pos).title("Destination")
+                    mDestinationMarker = mMap.addMarker(markerOptions)
+                    mDestinationMarker?.isDraggable = true
+                    val destinationAddressTask = AddressFinderAsyncTask(this@MapsActivity)
+                    destinationAddressTask.setOnAddressRetrievedListener(object: AddressFinderAsyncTask.OnAddressRetrievedListener{
+                        override fun onRetrieve(address: String) {
+                            mDestinationMarker?.title = address
+                            mDestinationMarker?.showInfoWindow()
+                            setMessage(address)
+                        }
+                    })
+                    destinationAddressTask.execute(pos)
+                }
+            }
+
+            override fun onMarkerDragStart(p0: Marker?) {
+
+            }
+
+            override fun onMarkerDrag(p0: Marker?) {
+
+            }
+        })
         mMap.setOnMyLocationClickListener(this)
         mMap.setOnMyLocationButtonClickListener(this)
         mMap.setOnMapClickListener(this)
@@ -71,6 +99,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMyLoca
                 myLocationAddressTask.setOnAddressRetrievedListener(object: AddressFinderAsyncTask.OnAddressRetrievedListener{
                     override fun onRetrieve(address: String) {
                         myLocationMarker?.title = address
+                        myLocationMarker?.showInfoWindow()
                     }
                 })
                 myLocationAddressTask.execute(latLng)
@@ -113,10 +142,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMyLoca
         latLng?.let {
             val marker = MarkerOptions().position(it).title("Destination")
             mDestinationMarker = mMap.addMarker(marker)
+            mDestinationMarker?.isDraggable = true
             val destinationAddressTask = AddressFinderAsyncTask(this@MapsActivity)
             destinationAddressTask.setOnAddressRetrievedListener(object: AddressFinderAsyncTask.OnAddressRetrievedListener{
                 override fun onRetrieve(address: String) {
                     mDestinationMarker?.title = address
+                    mDestinationMarker?.showInfoWindow()
+                    setMessage(address)
                 }
             })
             destinationAddressTask.execute(latLng)
