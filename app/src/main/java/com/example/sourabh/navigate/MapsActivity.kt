@@ -152,6 +152,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMyLoca
                 }
             })
             destinationAddressTask.execute(latLng)
+            val distanceFinderAsyncTask = DistanceFinderAsyncTask(this@MapsActivity)
+            distanceFinderAsyncTask.setOnAddressRetrievedListener(object : DistanceFinderAsyncTask.OnDistanceRetrievedListener{
+                override fun onRetrieve(distance: String) {
+                    setMessage(distance)
+                }
+            })
+            distanceFinderAsyncTask.execute(myLocationMarker?.position, mDestinationMarker?.position)
         }
     }
 
