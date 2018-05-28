@@ -100,6 +100,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMyLoca
                     override fun onRetrieve(address: String) {
                         myLocationMarker?.title = address
                         myLocationMarker?.showInfoWindow()
+                        source_address.text = address
                     }
                 })
                 myLocationAddressTask.execute(latLng)
@@ -108,7 +109,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMyLoca
     }
 
     private fun setMessage(msg: String) {
-        message.text = msg
+//        message.text = msg
     }
 
 
@@ -148,14 +149,30 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMyLoca
                 override fun onRetrieve(address: String) {
                     mDestinationMarker?.title = address
                     mDestinationMarker?.showInfoWindow()
-                    setMessage(address)
+                    destination_address.text = address
                 }
             })
             destinationAddressTask.execute(latLng)
             val distanceFinderAsyncTask = DistanceFinderAsyncTask(this@MapsActivity)
             distanceFinderAsyncTask.setOnAddressRetrievedListener(object : DistanceFinderAsyncTask.OnDistanceRetrievedListener{
-                override fun onRetrieve(distance: String) {
-                    setMessage(distance)
+                override fun onStart() {
+                    distance.text = "Loading........"
+                    time.text = "Loading........"
+                }
+
+                override fun onRetrieve() {
+                    val d = distanceFinderAsyncTask.distance
+                    distance.text  = if(d == -1L){
+                        "Not found"
+                    }else{
+                        d.toString()
+                    }
+                    val t = distanceFinderAsyncTask.time
+                    time.text  = if(t == -1L){
+                        "Not found"
+                    }else{
+                        t.toString()
+                    }
                 }
             })
             distanceFinderAsyncTask.execute(myLocationMarker?.position, mDestinationMarker?.position)
