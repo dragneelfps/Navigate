@@ -9,9 +9,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.*
 import kotlinx.android.synthetic.main.activity_maps.*
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMyLocationClickListener, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMapClickListener{
@@ -24,6 +22,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMyLoca
     private var mLocationPermissionDenied: Boolean = false
 
     var myLocationMarker: Marker? = null
+    private var routePolyline: Polyline? = null
 
     companion object {
         private val LOCATION_PERMISSION_REQ: Int = 123
@@ -137,7 +136,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMyLoca
 
     }
 
-
     override fun onMapClick(latLng: LatLng?) {
         mDestinationMarker?.remove()
         latLng?.let {
@@ -176,6 +174,23 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMyLoca
                 }
             })
             distanceFinderAsyncTask.execute(myLocationMarker?.position, mDestinationMarker?.position)
+            val directionFinderAsyncTask = DirectionFinderAsyncTask(this)
+            directionFinderAsyncTask.setOnAddressRetrievedListener(object : DirectionFinderAsyncTask.OnDirectionRetrievedListener{
+                override fun onStart() {
+
+                }
+
+                override fun onRetrieve() {
+                    routePolyline?.remove()
+                    directionFinderAsyncTask.steps?.let {
+                        routePolyline = mMap.addPolyline(PolylineOptions()
+                                .clickable(true)
+                                .addAll(it))
+                    }
+                }
+            })
+            directionFinderAsyncTask.execute(myLocationMarker?.position, mDestinationMarker?.position)
+
         }
     }
 
