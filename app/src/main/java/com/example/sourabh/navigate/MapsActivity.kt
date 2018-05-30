@@ -163,13 +163,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMyLoca
                     distance.text  = if(d == -1L){
                         "Not found"
                     }else{
-                        d.toString()
+                        formatDistance(d.toString())
                     }
                     val t = distanceFinderAsyncTask.time
                     time.text  = if(t == -1L){
                         "Not found"
                     }else{
-                        t.toString()
+                        formatTime(t.toString())
                     }
                 }
             })
@@ -193,5 +193,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMyLoca
 
         }
     }
+
+    fun formatTime(time: String) : String {
+        val t = time.toLong()
+        val hours = t/3600
+        val minutes = t/60
+        val secs = t%60
+        return "$hours hours $minutes minutes $secs seconds"
+    }
+
+    fun formatDistance(distance: String) = "$distance meters"
 
 }
