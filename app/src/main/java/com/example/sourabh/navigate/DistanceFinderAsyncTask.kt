@@ -4,6 +4,8 @@ import android.app.Activity
 import android.os.AsyncTask
 import android.util.Log
 import com.beust.klaxon.Klaxon
+import com.example.sourabh.navigate.models.DistanceApiRequest
+import com.example.sourabh.navigate.util.fromLatLngs
 import com.google.android.gms.maps.model.LatLng
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -39,9 +41,10 @@ class DistanceFinderAsyncTask(activity: Activity): AsyncTask<LatLng, Unit, Unit>
     }
 
     private fun calculateDistance(source: LatLng, destination: LatLng){
-        val originParam = generateQueryAddress(source)
-        val destinationParam = generateQueryAddress(destination)
-        val query = generateQuery(originParam, destinationParam)
+//        val originParam = generateQueryAddress(source)
+//        val destinationParam = generateQueryAddress(destination)
+//        val query = generateQuery(originParam, destinationParam)
+        val query = DistanceApiRequest(origins = fromLatLngs(source), destinations = fromLatLngs(destination)).toQueryUrl()
         Log.d("xyz_query", query)
         val response = getResponse(query)
         parseResponse(response)
