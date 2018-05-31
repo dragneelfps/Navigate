@@ -182,8 +182,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMyLoca
 
                 }
 
-                override fun onRetrieve() {
+                override fun onRetrieve(successful: Boolean) {
                     routePolyline?.remove()
+
+                    if(!successful) return
+
+                    //The request was successful
                     directionFinderAsyncTask.steps?.let {
                         routePolyline = mMap.addPolyline(PolylineOptions()
                                 .clickable(true)
