@@ -32,7 +32,7 @@ class DirectionFinderAsyncTask(activity: Activity) : AsyncTask<LatLng, Unit, Uni
     }
 
     private fun generateResponse(source: LatLng, destination: LatLng) {
-        val query = DirectionApiRequest(origin = fromLatLngs(source), destination = fromLatLngs(destination)).toQueryUrl()
+        val query = DirectionApiRequest(origin = fromLatLngs(source), destination = fromLatLngs(destination)).toQueryUrl(weakReferenceActivity.get()!!.baseContext)
         Log.d("xyz_direction_query", query)
         val response = getResponse(query)
         parseResponse(response)

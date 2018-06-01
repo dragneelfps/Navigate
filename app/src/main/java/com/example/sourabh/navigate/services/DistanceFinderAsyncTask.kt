@@ -42,7 +42,7 @@ class DistanceFinderAsyncTask(activity: Activity): AsyncTask<LatLng, Unit, Unit>
     }
 
     private fun calculateDistance(source: LatLng, destination: LatLng){
-        val query = DistanceApiRequest(origins = fromLatLngs(source), destinations = fromLatLngs(destination)).toQueryUrl()
+        val query = DistanceApiRequest(origins = fromLatLngs(source), destinations = fromLatLngs(destination)).toQueryUrl(weakReferenceActivity.get()!!.baseContext)
         Log.d("xyz_query", query)
         val response = getDistanceResponse(query)
         parseResponse(response)
