@@ -10,6 +10,7 @@ import android.support.v4.app.ActivityCompat
 import android.support.v4.app.DialogFragment
 
 object PermissionUtil {
+    
     fun requestPermission(context: Activity, permission: String, requestCode: Int){
         ActivityCompat.requestPermissions(context, arrayOf(permission), requestCode)
     }
