@@ -1,4 +1,4 @@
-package com.example.sourabh.navigate
+package com.example.sourabh.navigate.services
 
 import android.app.Activity
 import android.location.Address
@@ -13,6 +13,10 @@ class AddressFinderAsyncTask(activity: Activity): AsyncTask<LatLng,Void, String>
 
     private val weakReferenceActivity: WeakReference<Activity> = WeakReference(activity)
     private var mOnAddressRetrievedListener: OnAddressRetrievedListener? = null
+
+    override fun onPreExecute() {
+        mOnAddressRetrievedListener?.onStart()
+    }
 
     override fun doInBackground(vararg params: LatLng?): String {
         var address = ""
@@ -45,6 +49,7 @@ class AddressFinderAsyncTask(activity: Activity): AsyncTask<LatLng,Void, String>
     }
 
     interface OnAddressRetrievedListener {
+        fun onStart()
         fun onRetrieve(address: String)
     }
 
